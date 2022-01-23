@@ -12,3 +12,5 @@ During the winter break of 2021 to 2022 (before my 2nd term at UC - Berkeley!), 
 | [Project3-1: Path Tracer-1](https://cu2018.github.io/CS284A-P3-PathTracer1-SP21/) |
 |               ![p3-2](/covers/project3-2.png)                |
 | [Project3-2: Path Tracer-2](https://cu2018.github.io/CS284A-P3-PathTracer2-SP21/) |
+|                  ![p4](/cover/project4.gif)                  |
+| [Project4: Cloth Simulation](https://cu2018.github.io/CS284A-P4-ClothSim-SP21/) |
