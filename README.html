@@ -1,0 +1,233 @@
+<h1 id="project-4-cloth-simulation">Project 4: Cloth Simulation</h1>
+<p>You can view the spec for this project at <a href="https://cs184.eecs.berkeley.edu/sp21/docs/proj4">Assignment 4: Cloth Simulation</a>.</p>
+<figure>
+<img src="images/cover.gif" alt="" /><figcaption>cover</figcaption>
+</figure>
+<p>In this project, a real-time simple cloth simulation is implemented with mass-spring system model. Starting from building the data structures to discretely represent the cloth, I then define and apply physical constraints (including <code>STRUCTURAL</code>, <code>SHEARING</code>, or <code>BENDING</code> ) on them, and apply numerical integration to simulate the way cloth moves over time. Meanwhile, collisions with other objects (plane and sphere) and self-collisions are also implemented.</p>
+<h1 id="part-1-masses-and-springs">Part 1: Masses and Springs</h1>
+<p>In this part, the basic structure of cloth is built up with three types of constraints (including <code>STRUCTURAL</code>, <code>SHEARING</code>, or <code>BENDING</code>).</p>
+<p>Here are the outputs of a horizontally flat cloth wireframe with different settings of enabled constraints.</p>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 34%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part1_1.png" alt="part1_1" /></th>
+<th style="text-align: center;"><img src="images/part1_2.png" alt="part1_2" /></th>
+<th style="text-align: center;"><img src="images/part1_3.png" alt="part1_3" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">with all constraints</td>
+<td style="text-align: center;">without any shearing constraints</td>
+<td style="text-align: center;">with only shearing constraints</td>
+</tr>
+</tbody>
+</table>
+<p>An output of <code>scene\pinned2.json</code></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part1_4.png" alt="part1_4" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>scene\pinned2.json</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="part-2-simulation-via-numerical-integration">Part 2: Simulation via Numerical Integration</h1>
+<p>In this part, Verlet integration is implemented for integrating the physical equations of motion in order to apply the forces on our cloth’s point masses. And then, figure out how they move from one time step to the next.</p>
+<p>Here is a simulation process of the cloth with 4 ends pinned:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part2_1.gif" alt="part2_1" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>scene\pinned4.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>The appearance and behavior of the cloth can vary by modifying parameters, including the stiffness/resistance to deformation<code>ks</code> and <code>density</code>. While higher <code>ks</code> results in tight cloth that is less tend to stretch under gravity, higher <code>density</code> increases the downward gravitational force on the cloth and create more folds as shown below.</p>
+<p>Varying <code>ks</code> with fixed <code>density</code> = 15</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part2_1.png" alt="part2_1" /></th>
+<th style="text-align: center;"><img src="images/part2_2.png" alt="part2_2" /></th>
+<th style="text-align: center;"><img src="images/part2_3.png" alt="part2_3" /></th>
+<th style="text-align: center;"><img src="images/part2_4.png" alt="part2_4" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>ks</code> = 100</td>
+<td style="text-align: center;"><code>ks</code> = 1000</td>
+<td style="text-align: center;"><code>ks</code> = 5000 (default)</td>
+<td style="text-align: center;"><code>ks</code> = 100000</td>
+</tr>
+</tbody>
+</table>
+<p>Varying <code>density</code> with fixed <code>ks</code> = 5000</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part2_5.png" alt="part2_5" /></th>
+<th style="text-align: center;"><img src="images/part2_3.png" alt="part2_3" /></th>
+<th style="text-align: center;"><img src="images/part2_6.png" alt="part2_6" /></th>
+<th style="text-align: center;"><img src="images/part2_7.png" alt="part2_7" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>density</code> = 5</td>
+<td style="text-align: center;"><code>density</code> = 15 (default)</td>
+<td style="text-align: center;"><code>density</code> = 30</td>
+<td style="text-align: center;"><code>density</code> = 100</td>
+</tr>
+</tbody>
+</table>
+<h1 id="part-3-handling-collisions-with-other-objects">Part 3: Handling Collisions with Other Objects</h1>
+<p>In this part, collisions with other objects (including plane and sphere) are implemented. At a high level, the <code>collide</code> method will determine whether or not a given point mass is inside the primitive. If it is, we adjust the point mass’s position so that it stays just outside the primitive’s surface, accounting for friction as we do so.</p>
+<p>Colliding with sphere and plane (<strong>without</strong> self-collisions)</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part3_1.png" alt="part3_1" /></th>
+<th style="text-align: center;"><img src="images/part3_2.png" alt="part3_2" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>scene\sphere.json</code></td>
+<td style="text-align: center;"><code>scene\plane.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>Here is a simulation process of the cloth colliding with sphere (<strong>without</strong> self-collisions)</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part3_1.gif" alt="part3_1" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>scene\sphere.json</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="part-4-handling-self-collisions">Part 4: Handling Self-collisions</h1>
+<p>In this part, self-collision of cloth is implemented with spatial hashing.</p>
+<p>Here is a simulation process of the cloth placing vertically and colliding with the plane and itself. However, the jittering artifact is still noticeable. It could be improved with smaller step_of_time or better self-collision handling methods.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part4_1.gif" alt="part4_1" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>scene\selfCollision.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>With self-collision implemented, let’s compare the sphere-cloth collision with and without self-collision. It’s obvious that with collision, the part of cloth that is falling downward (below the sphere) is more natural and it’s not colliding with itself any more.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part3_1.gif" alt="part3_1" /></th>
+<th style="text-align: center;"><img src="images/part4_2.gif" alt="part4_2" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>without</strong> self-collision</td>
+<td style="text-align: center;"><strong>with</strong> self-collision</td>
+</tr>
+</tbody>
+</table>
+<h1 id="part-5-shaders">Part 5: Shaders</h1>
+<p>In this part, five different types of shaders are implemented using GLSL, including diffuse shading, Blinn-Phong shading, texture mapping, displacement and bump mapping, and environment-mapped reflections</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part5_1.png" alt="part5_1" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Diffuse Shading</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part5_2.png" alt="part5_2" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Blinn-Phong Shading</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part5_3.png" alt="part5_3" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Texture Mapping</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part5_411.png" alt="part5_411" /></th>
+<th style="text-align: center;"><img src="images/part5_412.png" alt="part5_412" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Bump Mapping</td>
+<td style="text-align: center;">Bump Mapping: does NOT change the vertex</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><img src="images/part5_421.png" alt="part5_421" /></td>
+<td style="text-align: center;"><img src="images/part5_422.png" alt="part5_422" /></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Displacement Mapping</td>
+<td style="text-align: center;">Displacement Mapping: changes the vertex and the geometry</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><img src="images/part5_5.png" alt="part5_5" /></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Environment-mapped Reflections (with cubemap textures)</td>
+</tr>
+</tbody>
+</table>
